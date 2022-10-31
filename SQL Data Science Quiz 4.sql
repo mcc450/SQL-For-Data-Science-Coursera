@@ -5,7 +5,7 @@ SELECT CustomerId,
        LastName, 
        Address, 
        UPPER(City || ' ' || Country) AS Location
-FROM Customers
+FROM Customers;
 
 -------------------------------------------------------------------------------------------------
 
@@ -16,7 +16,7 @@ SELECT FirstName,
        LOWER(SUBSTR(FirstName, 1, 4)) AS a,
        LOWER(SUBSTR(LastName, 1, 2)) AS b,
        LOWER(SUBSTR(FirstName, 1, 4)) || LOWER(SUBSTR(LastName, 1, 2)) AS UserId
-FROM Employees
+FROM Employees;
 
 -------------------------------------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ SELECT FirstName,
        DATE('now') - HireDate AS YearsWithCompany
 FROM Employees
 WHERE YearsWithCompany >= 15
-ORDER BY LastName ASC
+ORDER BY LastName ASC;
 
 -------------------------------------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ ORDER BY LastName ASC
 
 SELECT COUNT(*)
 FROM Customers
-WHERE [column_name] IS NULL
+WHERE [column_name] IS NULL;
 
 -- column_name: FirstName, PostalCode, Company, Fax, Phone, Address
 -- Answers: Postal Code, Company, Fax, Phone
@@ -49,7 +49,7 @@ SELECT City,
        COUNT(*) AS City_Count
 FROM Customers
 GROUP BY City
-ORDER BY Count(*) DESC
+ORDER BY Count(*) DESC;
 
 -------------------------------------------------------------------------------------------------
 
@@ -59,5 +59,5 @@ SELECT c.FirstName || c.LastName || i.InvoiceId
 FROM Customers AS c
 LEFT JOIN Invoices AS i
 ON c.CustomerId = i.CustomerId
-ORDER BY FirstName, LastName, InvoiceId
+ORDER BY FirstName, LastName, InvoiceId;
 
