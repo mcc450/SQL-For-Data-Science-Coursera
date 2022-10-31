@@ -32,17 +32,32 @@ ORDER BY LastName ASC
 
 -------------------------------------------------------------------------------------------------
 
-Question 4: Profiling the Customers table, answer the following question.
+-- Question 4: Profiling the Customers table, answer the following question.
 
 SELECT COUNT(*)
 FROM Customers
-WHERE Address IS NULL
+WHERE [column_name] IS NULL
 
+-- column_name: FirstName, PostalCode, Company, Fax, Phone, Address
+-- Answers: Postal Code, Company, Fax, Phone
 
+-------------------------------------------------------------------------------------------------
 
+-- Question 5: Find the cities with the most customers and rank in descending order.
 
+SELECT City,
+       COUNT(*) AS City_Count
+FROM Customers
+GROUP BY City
+ORDER BY Count(*) DESC
 
+-------------------------------------------------------------------------------------------------
 
+-- Question 6: Create a new customer invoice id by combining a customer’s invoice id with their first and last name while ordering your query in the following order: firstname, lastname, and invoiceID.
 
-
+SELECT c.FirstName || c.LastName || i.InvoiceId
+FROM Customers AS c
+LEFT JOIN Invoices AS i
+ON c.CustomerId = i.CustomerId
+ORDER BY FirstName, LastName, InvoiceId
 
