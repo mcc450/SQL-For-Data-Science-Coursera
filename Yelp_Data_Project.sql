@@ -51,7 +51,28 @@
 	
 	
 	-- SQL code used to arrive at answer:
-	
+SELECT COUNT(*)
+FROM user
+WHERE id IS NULL OR
+      name IS NULL OR
+      review_count IS NULL OR
+      yelping_since IS NULL OR
+      useful IS NULL OR
+      funny IS NULL OR
+      cool IS NULL OR
+      fans IS NULL OR
+      average_stars IS NULL OR
+      compliment_hot IS NULL OR 
+      compliment_more IS NULL OR 
+      compliment_profile IS NULL OR 
+      compliment_cute IS NULL OR 
+      compliment_list IS NULL OR 
+      compliment_note IS NULL OR 
+      compliment_plain IS NULL OR 
+      compliment_cool IS NULL OR 
+      compliment_funny IS NULL OR 
+      compliment_writer IS NULL OR 
+      compliment_photos IS NULL;
 	
 
 	
@@ -86,7 +107,11 @@
 -- 5. List the cities with the most reviews in descending order:
 
 	-- SQL code used to arrive at answer:
-	
+SELECT city,
+       SUM(review_count) AS total_review
+FROM business
+GROUP BY city
+ORDER BY total_reviews DESC;
 	
 	-- Copy and Paste the Result Below:
 	
@@ -97,7 +122,10 @@
 -- i. Avon
 
 -- SQL code used to arrive at answer:
-
+SELECT stars,
+       SUM(review_count) as count
+WHERE city = 'Avon'
+GROUP BY stars ASC;
 
 -- Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
 
@@ -105,7 +133,10 @@
 -- ii. Beachwood
 
 -- SQL code used to arrive at answer:
-
+SELECT stars,
+       SUM(review_count) as count
+WHERE city = 'Beachwood'
+GROUP BY stars ASC;
 
 -- Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
 		
@@ -114,7 +145,12 @@
 -- 7. Find the top 3 users based on their total number of reviews:
 		
 	-- SQL code used to arrive at answer:
-	
+SELECT id,
+       name,
+       review_count
+FROM user
+ORDER BY review_count DESC
+LIMIT 3;
 		
 	-- Copy and Paste the Result Below:
 		
@@ -124,6 +160,26 @@
 
 	-- Please explain your findings and interpretation of the results:
 	
+	
+	-- SQL Code used to arrive at answer:
+
+-- Finding people with most reviews.
+SELECT  name,
+	review_count,
+	fans,
+	Date('now') - yelping_since AS years_yelping
+FROM user
+GROUP BY name
+ORDER BY review_count DESC;
+
+-- Finding people with most fans. Comparing list of top users to list from top of previous query. Also using using the length of time as a yelp member to help gauge how long the user has been posting reviews to give more context.
+SELECT  name,
+	review_count,
+	fans,
+	Date('now') - yelping_since AS years_yelping
+FROM user
+GROUP BY name,
+ORDER BY fans DESC;
 
 	
 -- 9. Are there more reviews with the word "love" or with the word "hate" in them?
@@ -132,13 +188,27 @@
 
 	
 	-- SQL code used to arrive at answer:
+	
+-- Code for "love"
+SELECT COUNT(*) AS count_love
+FROM review
+WHERE text LIKE '%love%';
 
+-- Code for "hate"
+SELECT COUNT(*) AS count_hate
+FROM review
+WHERE text LIKE "%hate%"
 	
 	
 -- 10. Find the top 10 users with the most fans:
 
 	-- SQL code used to arrive at answer:
-	
+SELECT  id,
+	name,
+	fans
+FROM user
+ORDER BY fans DESC
+LIMIT 10;
 	
 	-- Copy and Paste the Result Below:
 
