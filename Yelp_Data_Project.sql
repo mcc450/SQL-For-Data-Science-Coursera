@@ -38,10 +38,10 @@ FROM [table_name]
 -- v. Review: primary key: id = 10,000  |  foreign keys: business_id: 8,090,  user_id: 9,581
 -- vi. Checkin: business_id = 493
 -- vii. Photo: primary key: id = 10,000  |  foreign key: business_id = 6,493
--- viii. Tip = 
--- ix. User = 
--- x. Friend = 
---  xi. Elite_years = 
+-- viii. Tip: user_id = 537, business_id = 3,979
+-- ix. User: primary key: id = 10,000
+-- x. Friend: user_id = 11
+--  xi. Elite_years: user_id = 2,780
 
 -- Note: Primary Keys are denoted in the ER-Diagram with a yellow key icon.	
 
@@ -88,28 +88,35 @@ WHERE id IS NULL OR
 
 	-- i. Table: Review, Column: Stars
 	
-		-- min:		  max:		  avg:
+		-- min:	1	  max: 5	  avg: 3.7082
 		
 	
 	-- ii. Table: Business, Column: Stars
 	
-		-- min:		  max:	  	  avg:
+		-- min:	1	  max: 5  	  avg: 3.6549
 		
 	
 	-- iii. Table: Tip, Column: Likes
 	
-		-- min:		  max:		  avg:
+		-- min:	0	  max: 2	   avg: .0144
 		
 	
 	-- iv. Table: Checkin, Column: Count
 	
-		-- min:		  max:		  avg:
-		
+		-- min:	1	  max: 53	   avg: 1.9414
+		 
 	
 	-- v. Table: User, Column: Review_count
 	
-		-- min:		  max:		  avg:
+		-- min:	0	  max: 2,000	   avg: 24.2995
 		
+-- SQL code used to arrive at answer:
+SELECT MIN(col_name),
+       MAX(col_name),
+       AVG(col_name)
+FROM tbl_name;
+
+
 
 
 -- 5. List the cities with the most reviews in descending order:
@@ -160,10 +167,23 @@ ORDER BY total_reviews DESC;
 -- SQL code used to arrive at answer:
 SELECT stars,
        SUM(review_count) as count
+FROM business
 WHERE city = 'Avon'
-GROUP BY stars ASC;
+GROUP BY stars
+ORDER BY stars ASC;
 
 -- Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
+
++-------+-------+
+| stars | count |
++-------+-------+
+|   1.5 |    10 |
+|   2.5 |     6 |
+|   3.5 |    88 |
+|   4.0 |    21 |
+|   4.5 |    31 |
+|   5.0 |     3 |
++-------+-------+
 
 
 -- ii. Beachwood
@@ -171,11 +191,23 @@ GROUP BY stars ASC;
 -- SQL code used to arrive at answer:
 SELECT stars,
        SUM(review_count) as count
+FROM business
 WHERE city = 'Beachwood'
-GROUP BY stars ASC;
+GROUP BY stars
+ORDER BY stars ASC;
 
 -- Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
-		
++-------+-------+
+| stars | count |
++-------+-------+
+|   2.0 |     8 |
+|   2.5 |     3 |
+|   3.0 |    11 |
+|   3.5 |     6 |
+|   4.0 |    69 |
+|   4.5 |    17 |
+|   5.0 |    23 |
++-------+-------+		
 
 
 -- 7. Find the top 3 users based on their total number of reviews:
@@ -189,13 +221,20 @@ ORDER BY review_count DESC
 LIMIT 3;
 		
 	-- Copy and Paste the Result Below:
-		
+
++------------------------+--------+--------------+
+| id                     | name   | review_count |
++------------------------+--------+--------------+
+| -G7Zkl1wIWBBmD0KRy_sCw | Gerald |         2000 |
+| -3s52C4zL_DHRK0ULG6qtg | Sara   |         1629 |
+| -8lbUNlXVSoXqaRRiHiSNg | Yuri   |         1339 |
++------------------------+--------+--------------+
 
 
 -- 8. Does posing more reviews correlate with more fans?
 
 	-- Please explain your findings and interpretation of the results:
-	
+	-- There is a relationship between more reviews correlating to more fans. The strength is undetermined. There also seems to be a connection between years spent on the platform and the number of fans as some users with high years on platform but with significantly lower review counts have a large number of fans.
 	
 	-- SQL Code used to arrive at answer:
 
@@ -206,7 +245,23 @@ SELECT  name,
 	Date('now') - yelping_since AS years_yelping
 FROM user
 GROUP BY name
-ORDER BY review_count DESC;
+ORDER BY review_count DESC
+limit 10;
+
++---------+--------------+------+---------------+
+| name    | review_count | fans | years_yelping |
++---------+--------------+------+---------------+
+| Gerald  |         2000 |  253 |            10 |
+| .Hon    |         1246 |  101 |            16 |
+| eric    |         1116 |   16 |            15 |
+| Roanna  |         1039 |  104 |            16 |
+| Dominic |          836 |   37 |            11 |
+| Lissa   |          834 |  120 |            15 |
+| Alison  |          775 |   61 |            15 |
+| Sui     |          754 |   78 |            13 |
+| Crissy  |          676 |   25 |            14 |
+| Joc     |          652 |   49 |            17 |
++---------+--------------+------+---------------+
 
 -- Finding people with most fans. Comparing list of top users to list from top of previous query. Also using using the length of time as a yelp member to help gauge how long the user has been posting reviews to give more context.
 SELECT  name,
@@ -214,13 +269,29 @@ SELECT  name,
 	fans,
 	Date('now') - yelping_since AS years_yelping
 FROM user
-GROUP BY name,
-ORDER BY fans DESC;
+GROUP BY name
+ORDER BY fans DESC
+limit 10;
 
++-----------+--------------+------+---------------+
+| name      | review_count | fans | years_yelping |
++-----------+--------------+------+---------------+
+| Gerald    |         2000 |  253 |            10 |
+| Lissa     |          834 |  120 |            15 |
+| bernice   |          255 |  105 |            15 |
+| Roanna    |         1039 |  104 |            16 |
+| .Hon      |         1246 |  101 |            16 |
+| Nieves    |          178 |   80 |             9 |
+| Sui       |          754 |   78 |            13 |
+| Koizumi   |          160 |   73 |            16 |
+| rebecca   |            6 |   69 |            14 |
+| Princeton |          376 |   64 |            13 |
++-----------+--------------+------+---------------+
 	
 -- 9. Are there more reviews with the word "love" or with the word "hate" in them?
 
-	-- Answer:
+	-- Answer: Love: 1,780  |  Hate: 232.
+	-- More reviews have "love".
 
 	
 	-- SQL code used to arrive at answer:
@@ -247,7 +318,20 @@ ORDER BY fans DESC
 LIMIT 10;
 	
 	-- Copy and Paste the Result Below:
-
++------------------------+-----------+------+
+| id                     | name      | fans |
++------------------------+-----------+------+
+| -9I98YbNQnLdAmcYfb324Q | Amy       |  503 |
+| -8EnCioUmDygAbsYZmTeRQ | Mimi      |  497 |
+| --2vR0DIsmQ6WfcSzKWigw | Harald    |  311 |
+| -G7Zkl1wIWBBmD0KRy_sCw | Gerald    |  253 |
+| -0IiMAZI2SsQ7VmyzJjokQ | Christine |  173 |
+| -g3XIcCb2b-BD0QBCcq2Sw | Lisa      |  159 |
+| -9bbDysuiWeo2VShFJJtcw | Cat       |  133 |
+| -FZBTkAZEXoP7CYvRV2ZwQ | William   |  126 |
+| -9da1xk7zgnnfO1uTVYGkA | Fran      |  124 |
+| -lh59ko3dxChBSZ9U7LfUw | Lissa     |  120 |
++------------------------+-----------+------+
 	
 		
 
