@@ -76,12 +76,13 @@ WHERE id IS NULL OR
       compliment_photos IS NULL;
       
  -- Result:
+ /*
 +----------+
 | COUNT(*) |
 +----------+
 |        0 |
 +----------+
-	
+*/
 
 	
 -- 4. For each table and column listed below, display the smallest (minimum), largest (maximum), and average (mean) value for the following fields:
@@ -129,6 +130,7 @@ GROUP BY city
 ORDER BY total_reviews DESC;
 	
 	-- Copy and Paste the Result Below:
+/*
 +-----------------+--------------+
 | city            | total_review |
 +-----------------+--------------+
@@ -158,6 +160,7 @@ ORDER BY total_reviews DESC;
 | Lakewood        |         1465 |
 | Goodyear        |         1155 |
 +-----------------+--------------+
+*/
 
 	
 -- 6. Find the distribution of star ratings to the business in the following cities:
@@ -197,6 +200,7 @@ GROUP BY stars
 ORDER BY stars ASC;
 
 -- Copy and Paste the Resulting Table Below (2 columns â€“ star rating and count):
+/*
 +-------+-------+
 | stars | count |
 +-------+-------+
@@ -208,7 +212,7 @@ ORDER BY stars ASC;
 |   4.5 |    17 |
 |   5.0 |    23 |
 +-------+-------+		
-
+*/
 
 -- 7. Find the top 3 users based on their total number of reviews:
 		
@@ -221,7 +225,7 @@ ORDER BY review_count DESC
 LIMIT 3;
 		
 	-- Copy and Paste the Result Below:
-
+/*
 +------------------------+--------+--------------+
 | id                     | name   | review_count |
 +------------------------+--------+--------------+
@@ -229,7 +233,7 @@ LIMIT 3;
 | -3s52C4zL_DHRK0ULG6qtg | Sara   |         1629 |
 | -8lbUNlXVSoXqaRRiHiSNg | Yuri   |         1339 |
 +------------------------+--------+--------------+
-
+*/
 
 -- 8. Does posing more reviews correlate with more fans?
 
@@ -248,6 +252,7 @@ GROUP BY name
 ORDER BY review_count DESC
 limit 10;
 
+/*
 +---------+--------------+------+---------------+
 | name    | review_count | fans | years_yelping |
 +---------+--------------+------+---------------+
@@ -262,6 +267,7 @@ limit 10;
 | Crissy  |          676 |   25 |            14 |
 | Joc     |          652 |   49 |            17 |
 +---------+--------------+------+---------------+
+*/
 
 -- Finding people with most fans. Comparing list of top users to list from top of previous query. Also using using the length of time as a yelp member to help gauge how long the user has been posting reviews to give more context.
 SELECT  name,
@@ -273,6 +279,7 @@ GROUP BY name
 ORDER BY fans DESC
 limit 10;
 
+/*
 +-----------+--------------+------+---------------+
 | name      | review_count | fans | years_yelping |
 +-----------+--------------+------+---------------+
@@ -287,6 +294,7 @@ limit 10;
 | rebecca   |            6 |   69 |            14 |
 | Princeton |          376 |   64 |            13 |
 +-----------+--------------+------+---------------+
+*/
 	
 -- 9. Are there more reviews with the word "love" or with the word "hate" in them?
 
@@ -318,6 +326,7 @@ ORDER BY fans DESC
 LIMIT 10;
 	
 	-- Copy and Paste the Result Below:
+/*
 +------------------------+-----------+------+
 | id                     | name      | fans |
 +------------------------+-----------+------+
@@ -332,37 +341,89 @@ LIMIT 10;
 | -9da1xk7zgnnfO1uTVYGkA | Fran      |  124 |
 | -lh59ko3dxChBSZ9U7LfUw | Lissa     |  120 |
 +------------------------+-----------+------+
-	
+*/
 		
 
 -- Part 2: Inferences and Analysis
 
 -- 1. Pick one city and category of your choice and group the businesses in that city or category by their overall star rating. Compare the businesses with 2-3 stars to the businesses with 4-5 stars and answer the following questions. Include your code.
-	
--- i. Do the two groups you chose to analyze have a different distribution of hours?
 
+	-- First issue with this analysis is that there are many uncategorized businesses.
+	-- City: Phoenix
+	-- Category: Restaurants & Shopping
+
+-- i. Do the two groups you chose to analyze have a different distribution of hours?
+	-- While there are only 4 restaurants that are returned, the two with higher ratings have shorter hours. The two higher rated restaurants are typically open for 7 hours and 11 hours whereas the lower rated restaurants are typically open for 18 hours and 14 hours. The higher rated restaurants are also not open for breakfast hours nor are they open very late at night. One high rated restaurant does not list hours but is named "Matt's Big Breakfast" which is likely only open for morning hours based on the name - again another high rated restaurant that likely focuses on one type of food.
 
 -- ii. Do the two groups you chose to analyze have a different number of reviews?
-         
+         -- The review amounts are mixed. The low rated restaurants have reviews counts of 8 and 60 whereas the high rated restaurants have review counts of 7, 188, and 431. The review count of 8 for the low rated restaurants is for McDonald's which is odd due to its notoriety and typical popularity despite bad reviews.
          
 -- iii. Are you able to infer anything from the location data provided between these two groups? Explain.
+	-- All restaurants have different postal codes and all neighborhood values are null. Nothing can be inferred from the postal codes or lack of neighborhoods. Addresses could be checked if all were looked up on a map to determine what areas / type of areas the restaurants are in.
 
 -- SQL code used for analysis:
 
+SELECT b.name,
+    b.city,
+    h.hours,
+    b.review_count,
+    b.stars,
+    b.postal_code,
+    c.category,
+CASE
+    WHEN b.stars BETWEEN 2.0 AND 3.0 THEN '2-3 Stars'
+    WHEN b.stars BETWEEN 4.0 AND 5.0 THEN '4-5 Stars'
+END AS review_star
+FROM business as b
+LEFT JOIN hours as h
+ON b.id = h.business_id
+LEFT JOIN category c
+ON b.id = c.business_id
+WHERE b.city = 'Phoenix'
+AND c.category = 'Restaurants'
+GROUP BY stars, review_star
+ORDER BY review_star;
 		
+/*	
++----------------------------------------+---------+----------------------+--------------+-------+-------------+-------------+-------------+
+| name                                   | city    | hours                | review_count | stars | postal_code | category    | review_star |
++----------------------------------------+---------+----------------------+--------------+-------+-------------+-------------+-------------+
+| Five Guys                              | Phoenix | Saturday|10:00-22:00 |           63 |   3.5 | 85008       | Restaurants |        None |
+| McDonald's                             | Phoenix | Saturday|5:00-0:00   |            8 |   2.0 | 85004       | Restaurants |   2-3 Stars |
+| Gallagher's                            | Phoenix | Saturday|9:00-2:00   |           60 |   3.0 | 85024       | Restaurants |   2-3 Stars |
+| Bootleggers Modern American Smokehouse | Phoenix | Saturday|11:00-22:00 |          431 |   4.0 | 85028       | Restaurants |   4-5 Stars |
+| Charlie D's Catfish & Chicken          | Phoenix | Saturday|11:00-18:00 |            7 |   4.5 | 85034       | Restaurants |   4-5 Stars |
++----------------------------------------+---------+----------------------+--------------+-------+-------------+-------------+-------------+
+
+Another table was used to analyze hours distribution where the table did not group all restaurant data together but showed each day along with the hours the restaurant was listed as open.
+*/
 		
 -- 2. Group business based on the ones that are open and the ones that are closed. What differences can you find between the ones that are still open and the ones that are closed? List at least two differences and the SQL code you used to arrive at your answer.
 		
 -- i. Difference 1:
-         
+         -- The average number of reviews is somewhat significant in open (31) vs closed (23). This could be caused by many things. Would want to look into average duration of business being open as well. The longer a business is open, the more reviews it is likely to get. This could be a counfounding variable in the average number of reviews.
          
 -- ii. Difference 2:
+         -- Average starts between open and closed isn't significant. 3.52 for closed and 3.68 for open for a difference of 0.16. This does not seem to make a big difference.
          
-         
-         
--- SQL code used for analysis:
 
-	
+-- SQL code used for analysis:
+SELECT b.is_open,
+    SUM(b.review_count)/COUNT(DISTINCT b.id) AS avg_num_reviews,
+    AVG(b.stars) AS avg_stars,
+    COUNT(DISTINCT b.id)
+FROM business b
+GROUP BY b.is_open
+
+/*
++---------+-----------------+---------------+----------------------+
+| is_open | avg_num_reviews |     avg_stars | COUNT(DISTINCT b.id) |
++---------+-----------------+---------------+----------------------+
+|       0 |              23 | 3.52039473684 |                 1520 |
+|       1 |              31 | 3.67900943396 |                 8480 |
++---------+-----------------+---------------+----------------------+
+*/
+
 	
 -- 3. For this last part of your analysis, you are going to choose the type of analysis you want to conduct on the Yelp dataset and are going to prepare the data for analysis.
 
