@@ -430,12 +430,61 @@ GROUP BY b.is_open
 -- Ideas for analysis include: Parsing out keywords and business attributes for sentiment analysis, clustering businesses to find commonalities or anomalies between them, predicting the overall star rating for a business, predicting the number of fans a user will have, and so on. These are just a few examples to get you started, so feel free to be creative and come up with your own problem you want to solve. Provide answers, in-line, to all of the following:
 	
 -- i. Indicate the type of analysis you chose to do:
+	-- Are there any connections between attributes of a review / business that correlate to higher ratings.
          
          
 -- ii. Write 1-2 brief paragraphs on the type of data you will need for your analysis and why you chose that data:
-                           
-                  
+	-- I need the star ratings of the businesses and the attribute value of 'goodforkids'. These come from the business table and the attribute table.
+	-- For me and my wife, businesses and especially restaurants that allow children are a quick favorite. Especially in Utah where places that serve alcohol must either be a restaurant (allow children) or a bar (don't allow children), many bars are no longer an option with a child. Now with my own child, places that allow children are likely to get a higher rating from me.
+	
 -- iii. Output of your finished dataset:
-         
-         
+
+
+-- FIRST ANALYSIS
+/*
++---------------+-------+
+|  AVG(b.stars) | value |
++---------------+-------+
+|         3.125 | 0     |
+| 3.41666666667 | 1     |
++---------------+-------+
+*/
+
+-- SECOND ANALYSIS
+/*
++--------------+-------+-------------+
+| AVG(b.stars) | value | category    |
++--------------+-------+-------------+
+|          3.0 | 0     | Restaurants |
+|         3.24 | 1     | Restaurants |
++--------------+-------+-------------+
+*/
+
+
+-- There seems to be a significant difference in rating across all business types that aren't good for kids (0) and those that are good for kids (1). While this difference is across all businesses, I wonder if the difference changes significantly when narrowed down to specific business types like restaurants.
+-- When filtering by restaurants, we can see there is still a significant difference in rating that favors the good for kids attribute.
+	 
 -- iv. Provide the SQL code you used to create your final dataset:
+
+-- FIRST ANALYSIS
+SELECT AVG(b.stars),
+        a.value
+FROM business b 
+INNER JOIN attribute a 
+ON b.id = a.business_id
+WHERE a.name LIKE '%goodforkids%'
+GROUP BY a.value
+
+-- SECOND ANALYSIS
+SELECT AVG(b.stars),
+        a.value,
+        c.category
+FROM business b 
+INNER JOIN attribute a 
+ON b.id = a.business_id
+INNER JOIN category c
+ON b.id = c.business_id
+WHERE a.name LIKE '%goodforkids%' AND c.category LIKE '%restaurant%'
+GROUP BY a.value
+
+
