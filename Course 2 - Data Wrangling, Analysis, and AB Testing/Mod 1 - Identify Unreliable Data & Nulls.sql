@@ -238,12 +238,8 @@ WHERE parent_user_id IS NULL;
 
 -- This will avoid NULLs for id values where the tables are joined. Information needed can be included in the SELECT
 
-SELECT COALESCE(parent_user_id, user_id) AS original_user_id,
-      parent_user_id,
-      user_id,
-      first_name,
-      last_name
+SELECT COUNT(*)
 FROM dsv1069.orders
 JOIN dsv1069.users
-ON orders.user_id = users.parent_user_id;
+ON orders.user_id = COALESCE(users.parent_user_id, users.id)
 
