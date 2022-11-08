@@ -172,7 +172,7 @@ server	    | 1499 days 23:51:56
 -- Exercise 3:
 -- Goal: Imagine that you need to count item views by day. You found this table item_views_by_category_temp - should you use it to answer your questiuon? 
 
-
+-- This type of table should not be used in an analysis because it is clearly labeled as temporary. Likely uesd for another person's analysis and for a specific purpose.
 
 
 
