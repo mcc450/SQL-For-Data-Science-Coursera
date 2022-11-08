@@ -1,0 +1,2 @@
+-- Exercise 1:
+-- Goal: Using any methods you like determine if you can you trust this events table. 
