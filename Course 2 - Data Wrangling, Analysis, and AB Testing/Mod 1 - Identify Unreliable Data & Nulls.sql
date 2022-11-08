@@ -173,15 +173,76 @@ server	    | 1499 days 23:51:56
 -- Goal: Imagine that you need to count item views by day. You found this table item_views_by_category_temp - should you use it to answer your questiuon? 
 
 -- This type of table should not be used in an analysis because it is clearly labeled as temporary. Likely uesd for another person's analysis and for a specific purpose.
+-- The number of events could be calculated, but we cannot get the different days from this table directly. We would need to reference the original table that contains date information.
+
+SELECT *
+FROM dsv1069.item_views_by_category_temp;
+
+/*
+category	users	view_events
+apparatus	708	1725
+contraption	668	1538
+device	634	1551
+gadget	650	1541
+instrument	730	1700
+mechanism	670	1588
+module	682	1600
+tool	682	1637
+widget	682	1601
+*/
+
+---------------------------------------------------------------------------------
+
+-- Exercise 4:
+-- Goal: Using any methods you like, decide if this table is ready to be used as a source of truth. 
+
+-- This table is not in the database
+SELECT *
+FROM dsv1069.raw_events;
+
+-- ERROR: relation "dsv1069.raw_events" does not exist
+
+---------------------------------------------------------------------------------
+
+-- Exercise 5:
+-- Goal: Is this the right way to join orders to users?
+
+-- No, COALESCE should be used to avoid NULLs being matched with other NULLs. We only want rows with values, COALESCE will pull the first non-null value and avoid this.
+
+-- Determine the column they are being joined on, use COALESCE to avoid NULLs.
+
+SELECT *
+FROM dsv1069.orders;
+-- user_id
+
+SELECT COUNT(*)
+FROM dsv1069.orders;
+
+-- count
+-- 47402
+-------------------------
+
+SELECT *
+FROM dsv1069.users;
+-- parent_user_id
+
+-- NULL parent_user_id Count
+SELECT COUNT(*)
+FROM dsv1069.users
+WHERE parent_user_id IS NULL;
+
+-- count
+-- 110770
 
 
+-- This will avoid NULLs for id values where the tables are joined. Information needed can be included in the SELECT
 
-
-
-
-
-
-
-
-
+SELECT COALESCE(parent_user_id, user_id) AS original_user_id,
+      parent_user_id,
+      user_id,
+      first_name,
+      last_name
+FROM dsv1069.orders
+JOIN dsv1069.users
+ON orders.user_id = users.parent_user_id;
 
