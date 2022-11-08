@@ -94,6 +94,7 @@ count
 */
 
 -- It is evident by looking at the event_time data that the tag "201701" in the table name refers to January 2017. All of the data is reliable, but is only from a single month and would only be useful for a small analysis.
+-- 
 
 ---------------------------------------------------------------------------------
 
