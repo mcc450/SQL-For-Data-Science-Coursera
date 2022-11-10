@@ -70,9 +70,49 @@ ON
 -- Clean up this query outline from the outline in EX2 and pull only the columns you need. 
 -- Make sure they are named appropriately so that another human can read and understand their contents.
 
+SELECT 
+  COALESCE(users.parent_user_id, users.id) AS user_id,
+  users.email_address,
+  items.id AS item_id,
+  items.name AS item_name,
+  items.category AS item_category
+FROM 
+  ( 
+    SELECT
+      user_id,
+      item_id,
+      event_time,
+      ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY event_time DESC)
+        AS view_number
+    FROM 
+      dsv1069.view_item_events
+) recent_views
+JOIN 
+  dsv1069.users
+ON 
+  users.id = recent_views.user_id 
+JOIN 
+  dsv1069.items 
+ON 
+  items.id = recent_views.item_id
+JOIN 
+  dsv1069.orders
+ON 
+  orders.item_id = recent_views.item_id 
+AND
+  orders.user_id = recent_views.user_id
+;
 
+/*
+user_id	email_address	item_id	item_name	item_category
+57053	TambikaPetrov@gmail.net	1126	apparatus	apparatus
+206123	TGupta1974@outlook.net	511	extra-strength mechanism storage_unit	mechanism
+210121	Janelle_Petrov@yahoo.edu	3203	dongle carrying_case	dongle
+173391	Lisa_Bertrand1971@earthlink.com	880	contraption warmer	contraption
+49734	Elizabeth_Varghese@inbox.net	2700	organic mechanism	mechanism
+*/
 
-
+----------------------------------------------------------------------------------------
 
 
 
